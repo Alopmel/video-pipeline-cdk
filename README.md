@@ -25,6 +25,7 @@ Este proyecto define una infraestructura en AWS usando **AWS CDK v2** con **Type
 
 ## 🗂️ Estructura del proyecto
 
+```yaml
 . 
 ├── bin/ 
 │ 
@@ -39,10 +40,7 @@ Este proyecto define una infraestructura en AWS usando **AWS CDK v2** con **Type
 ├── tsconfig.json # Configuración TS 
 ├── cdk.json # Config CDK 
 └── README.md # Estás aquí 😄
-
-yaml
-Copiar
-Editar
+```
 
 ---
 
@@ -54,112 +52,130 @@ cd video-pipeline-cdk
 npm install
 aws configure
 npm install -g aws-cdk
-🔐 cdk bootstrap ¿Para qué sirve?
+```
+
+---
+
+## 🔐 cdk bootstrap ¿Para qué sirve?
+
 Antes de desplegar, necesitas preparar tu cuenta AWS:
 
-bash
-Copiar
-Editar
+```bash
 cdk bootstrap
+```
+
 Esto crea un stack llamado CDKToolkit, que contiene:
 
-Un bucket S3 para almacenar código de Lambdas, assets, etc.
+- Un bucket S3 para almacenar código de Lambdas, assets, etc.
+- Roles IAM usados por CDK
+- Parámetros SSM para compatibilidad
+- ✅ Se ejecuta una vez por cuenta/región.
 
-Roles IAM usados por CDK
+---
 
-Parámetros SSM para compatibilidad
+## 🛠️ Comandos útiles
 
-✅ Se ejecuta una vez por cuenta/región.
-
-🛠️ Comandos útiles
-bash
-Copiar
-Editar
+```bash
 npm run build          # Transpila TypeScript
 cdk diff               # Muestra cambios vs AWS
 cdk deploy             # Despliega a la nube ☁️
 cdk destroy            # Elimina el stack
-🚀 Despliegue
-bash
-Copiar
-Editar
-cdk deploy
-Al finalizar, obtendrás valores como:
+```
 
-ini
-Copiar
-Editar
+---
+
+## 🚀 Despliegue
+
+```bash
+cdk deploy
+```
+
+- Al finalizar, obtendrás valores como:
+
+```ini
 VideoPipelineCdkStack.BucketName = video-upload-bucket-abc
 VideoPipelineCdkStack.StepFunctionArn = arn:aws:states:...
+```
+
 📍 También visibles en AWS Console → CloudFormation → Outputs.
 
-🧪 ¿Cómo probarlo?
-Entra al bucket S3 creado
+---
 
-Sube un .mp4 o .mov
+## 🧪 ¿Cómo probarlo?
 
-Se lanzará automáticamente:
+- Entra al bucket S3 creado.
+- Sube un `.mp4` o `.mov`.
+- Se lanzará automáticamente:
+  - EventBridge detecta la subida.
+  - Step Function inicia.
+  - Ejecuta las 3 Lambdas una tras otra.
+- Monitorea en:
+  - Step Functions → ejecuciones.
+  - CloudWatch → logs Lambda.
+  - S3 → vídeos subidos y procesados.
 
-EventBridge detecta la subida
+---
 
-Step Function inicia
+## 🧨 Errores típicos
 
-Ejecuta las 3 Lambdas una tras otra
-
-Monitorea en:
-
-Step Functions → ejecuciones
-
-CloudWatch → logs Lambda
-
-S3 → vídeos subidos y procesados
-
-🧨 Errores típicos
 ❌ cdk bootstrap falla con bucket existente
 Mensaje:
 
-arduino
-Copiar
-Editar
+```bash
 cdk-hnb659fds-assets-... already exists
-✅ Solución:
+```
 
-Borra el bucket conflictivo en S3
+---
 
-Elimina la stack CDKToolkit en CloudFormation
+## ✅ Solución:
 
-Ejecuta de nuevo cdk bootstrap
+- Borra el bucket conflictivo en S3
+- Elimina la stack CDKToolkit en CloudFormation
+- Ejecuta de nuevo 
 
-❌ SSM parameter /cdk-bootstrap/hnb659fds/version not found
+```bash
+cdk bootstrap
+```
+
+---
+
+## ❌ SSM parameter /cdk-bootstrap/hnb659fds/version not found
+
 Mensaje:
 
-nginx
-Copiar
-Editar
+```bash
 Has the environment been bootstrapped?
-✅ Solución:
+```
+
+---
+
+## ✅ Solución:
 
 Verifica que ejecutaste cdk bootstrap con el IAM correcto, no el root
 
 Comprueba tu identidad con:
 
-bash
-Copiar
-Editar
+```bash
 aws sts get-caller-identity
-🔒 Seguridad
-❌ No se usan credenciales root
+```
 
-✅ Usuario IAM (cdk-admin) con AdministratorAccess fue usado solo para test
+---
 
-✅ En producción, usa roles separados y permisos mínimos
+## 🔒 Seguridad
 
-🤝 Contribuciones
+- ❌ No se usan credenciales root
+- ✅ Usuario IAM (cdk-admin) con AdministratorAccess fue usado solo para test
+- ✅ En producción, usa roles separados y permisos mínimos
+
+---
+
+## 🤝 Contribuciones
 Pull Requests, Issues, ideas locas... ¡todo es bienvenido!
 
-✨ Autores
-Alba López Melián 😎 – El 🧠 detrás de esta obra maestra
+---
 
-Deva 🤖 – El copiloto de los bits y bytes 🔨🤖🔧
+## ✨ Autores
 
-Hecho con 💛 usando AWS CDK y buena onda DevOps
+- Alba López Melián 😎 – El 🧠 humano
+- Deva 🤖 – El 🧠 virtual  
+
